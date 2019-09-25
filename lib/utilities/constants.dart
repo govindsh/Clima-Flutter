@@ -35,3 +35,9 @@ const kInputStyleDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(10.0),),
     borderSide: BorderSide.none,),
 );
+
+const kCreditScreenTextStyle = TextStyle(
+    fontSize: 25.0,
+    fontFamily: 'DG',
+    color: Colors.white
+);

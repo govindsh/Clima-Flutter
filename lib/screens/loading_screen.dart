@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:clima/services/weather.dart';
 import 'package:clima/screens/location_screen.dart';
+import 'package:clima/screens/nointernet_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:connectivity/connectivity.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -10,7 +11,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-
   @override
   void initState() {
     print("Getting location...");
@@ -19,23 +19,31 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocationData() async {
-
     var weatherDataMap = Map();
 
-    weatherDataMap = await WeatherModel().getlocationWeather();
+    // Check for internet connection
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Navigator.push(context, new MaterialPageRoute(builder: (context) {
+        return NoInternetScreen();
+      }));
+    } else {
+      weatherDataMap = await WeatherModel().getlocationWeather();
 
-    var weatherData = weatherDataMap['weatherData'];
-    print("Weather data - $weatherData");
+      var weatherData = weatherDataMap['weatherData'];
+      print("Weather data - $weatherData");
 
-    var hourlyData = weatherDataMap['hourlyData'];
-    print("Hourly data - $hourlyData");
+      var hourlyData = weatherDataMap['hourlyData'];
+      print("Hourly data - $hourlyData");
 
-    Navigator.push(context, new MaterialPageRoute(builder: (context) {
-      return LocationScreen(locationWeather: weatherData,locationHourWeather: hourlyData,);
-    }));
-
+      Navigator.push(context, new MaterialPageRoute(builder: (context) {
+        return LocationScreen(
+          locationWeather: weatherData,
+          locationHourWeather: hourlyData,
+        );
+      }));
+    }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +51,22 @@ class _LoadingScreenState extends State<LoadingScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Hero(
+            tag: 'weatherman',
+            child: Image(
+              image: AssetImage('images/weatherman.png'),
+              height: 120.0,
+            ),
+          ),
           Center(
             child: SpinKitHourGlass(
               color: Colors.red.shade500,
-              size: 100.0,
+              size: 50.0,
             ),
           ),
-          SizedBox(height: 10.0,),
+          SizedBox(
+            height: 10.0,
+          ),
           Text('Getting location...'),
         ],
       ),

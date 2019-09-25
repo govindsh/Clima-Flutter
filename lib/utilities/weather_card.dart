@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class WeatherCard extends StatelessWidget {
   final String keyType;
   final String value;
-  WeatherCard({@required this.keyType, @required this.value});
+  final String imageName;
+  WeatherCard({@required this.keyType, @required this.value, this.imageName});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,12 @@ class WeatherCard extends StatelessWidget {
       child: InkWell(
         splashColor: Colors.blue.withAlpha(30),
         child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(image: AssetImage(imageName),
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.4), BlendMode.dstATop),
+            ),
+          ),
           width: 100,
           height: 80,
           child: Column(
@@ -21,7 +28,8 @@ class WeatherCard extends StatelessWidget {
                 child: Text(
                   '$keyType',
                   style: TextStyle(
-                    color: Color(0xFFCDD2DF),
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold
                   ),
                 ),
               ),
@@ -34,6 +42,7 @@ class WeatherCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
                     fontFamily: 'Julius',
                   ),
                 ),

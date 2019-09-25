@@ -1,6 +1,7 @@
 import 'package:clima/services/location.dart';
 import 'package:clima/services/networking.dart';
 import 'package:flutter/material.dart';
+import 'package:clima/screens/nointernet_screen.dart';
 import 'dart:convert';
 
 
@@ -15,7 +16,9 @@ class WeatherModel {
     var url = '$openWeatheMapURL?q=$cityName&appId=$appId&units=metric';
     NetworkHelper networkHelper = NetworkHelper(url);
 
+    print("URL - $url");
     var weatherData = await networkHelper.getData();
+    print(weatherData);
 
     var forecastUrl = '$openWeatherMapForecastURL?q=$cityName&appId=$appId&'
         'units=metric';
@@ -25,10 +28,25 @@ class WeatherModel {
 
     var weatherDataMap = Map();
 
-    weatherDataMap['weatherData'] = weatherData;
-    weatherDataMap['hourlyData'] = hourlyData;
+    if (weatherData is int) {
+      if (weatherData == 404) {
+        print("No data found");
+        return null;
+      } else if (weatherData == 400) {
 
-    return weatherDataMap;
+      }
+    }
+
+    if (weatherData != null && hourlyData != null) {
+      weatherDataMap['weatherData'] = weatherData;
+      weatherDataMap['hourlyData'] = hourlyData;
+      return weatherDataMap;
+    } else {
+      if (weatherData == 404) {
+        print("No data found");
+        return null;
+      }
+    }
 
   }
 
@@ -39,11 +57,20 @@ class WeatherModel {
         '${location.latitude}&lon=${location.longitude}&appid=$appId&units=metric';
     NetworkHelper networkHelper = NetworkHelper(url);
 
-    var weatherData = await networkHelper.getData();
+    var weatherDataMap = Map();
+
+    var weatherData;
+    try {
+       weatherData = await networkHelper.getData();
+    } catch (SocketException) {
+      weatherDataMap['weatherData'] = 'No Internet Connection';
+      weatherDataMap['hourlyData'] = 'No Internet Connection';
+      return weatherDataMap;
+    }
 
     var hourlyData = await getHourlyWeatherData(location.latitude, location.longitude);
 
-    var weatherDataMap = Map();
+
 
     weatherDataMap['weatherData'] = weatherData;
     weatherDataMap['hourlyData'] = hourlyData;

@@ -1,6 +1,7 @@
 import 'package:clima/services/location.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 
 Location location = Location();
 
@@ -18,8 +19,16 @@ class NetworkHelper {
       return decodedData;
     } else {
       print(response.statusCode);
+      return response.statusCode;
     }
+  }
 
-
+  static Future<bool> checkInternetConnection() async {
+    var connectionResult = await (Connectivity().checkConnectivity());
+    if (connectionResult == ConnectivityResult.none) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

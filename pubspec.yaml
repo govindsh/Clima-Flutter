@@ -18,6 +18,11 @@ dependencies:
   flutter_svg: ^0.14.1
   intl: ^0.16.0
   async_loader: ^0.1.2
+  flutter_typeahead: ^1.6.1
+  connectivity: ^0.4.4
+  app_settings: ^1.0.6+2
+  modal_progress_hud: ^0.1.3
+  animated_text_kit: ^1.3.1
 
 
 dev_dependencies:
@@ -44,3 +49,6 @@ flutter:
   - family: DG
     fonts:
     - asset: fonts/DarkerGrotesque-Regular.ttf
+  - family: Major Mono
+    fonts:
+    - asset: fonts/MajorMonoDisplay-Regular.ttf
