@@ -14,7 +14,7 @@ class SunCard extends StatelessWidget {
       return 'Unavailable';
     } else {
       var humanReadableTimestamp =
-      DateTime.fromMillisecondsSinceEpoch(time * 1000).toLocal();
+          DateTime.fromMillisecondsSinceEpoch(time * 1000).toLocal();
       var format = new DateFormat.Md().add_jm();
       var hourFormat = format.format(humanReadableTimestamp);
       return hourFormat;
@@ -24,6 +24,7 @@ class SunCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: CircleBorder(side: BorderSide(style: BorderStyle.none)),
       color: isSunRise ? Colors.yellowAccent : Colors.deepOrange,
       child: Column(
         children: <Widget>[
@@ -37,15 +38,15 @@ class SunCard extends StatelessWidget {
                   fontSize: 15.0),
             ),
           ),
-          Expanded(
-            child: isSunRise
-                ? Image.asset(
-                    'images/sunrise.png',
-                  )
-                : Image.asset(
-                    'images/sunset.png',
-                  ),
-          ),
+          isSunRise
+              ? Image.asset(
+                  'images/sunrise.png',
+                  scale: 8,
+                )
+              : Image.asset(
+                  'images/sunset_1.png',
+                  scale: 8,
+                ),
           FittedBox(
             child: Text(
               getLocalTime(timestamp),

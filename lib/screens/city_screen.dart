@@ -8,6 +8,7 @@ import 'package:clima/screens/nointernet_screen.dart';
 import 'package:clima/services/weather.dart';
 import 'package:clima/services/networking.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:clima/services/here_weather.dart';
 
 class CityScreen extends StatefulWidget {
   @override
@@ -84,7 +85,7 @@ class _CityScreenState extends State<CityScreen> {
                           textFieldConfiguration: TextFieldConfiguration(
                             cursorColor: Colors.black,
                             style: TextStyle(
-                              color: Colors.black
+                                color: Colors.black
                             ),
                             controller: this._typeAheadController,
                             decoration: kInputStyleDecoration,
@@ -131,12 +132,16 @@ class _CityScreenState extends State<CityScreen> {
                       weatherDataMap = await WeatherModel().getCityWeather(cityName);
                       print('Weather data map for city $cityName - $weatherDataMap');
 
+                      var sevenDayForecast = await HereWeatherModel().getSevenDayCityWeather(cityName);
+                      print('7 day Here Weather for city $cityName - $sevenDayForecast');
+
                       // City not found - null data returned to the user - handle it
-                      if (weatherDataMap == null) {
+                      if (weatherDataMap == null || sevenDayForecast == null) {
                         Navigator.push(context, new MaterialPageRoute(builder: (context) {
                           return LocationScreen(
                             locationWeather: null,
                             locationHourWeather: null,
+                            sevenDayWeather: null,
                           );
                         }));
                       }
@@ -148,6 +153,7 @@ class _CityScreenState extends State<CityScreen> {
                               return LocationScreen(
                                 locationWeather: weatherDataMap['weatherData'],
                                 locationHourWeather: weatherDataMap['hourlyData'],
+                                sevenDayWeather: sevenDayForecast,
                               );
                             }));
                       }

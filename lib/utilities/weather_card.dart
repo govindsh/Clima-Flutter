@@ -10,9 +10,7 @@ class WeatherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        child: Container(
+      child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(imageName),
                 fit: BoxFit.contain,
@@ -50,7 +48,6 @@ class WeatherCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

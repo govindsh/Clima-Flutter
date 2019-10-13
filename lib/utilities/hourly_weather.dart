@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clima/utilities/constants.dart';
 
 class HourlyWeatherCard extends StatelessWidget {
   final String time;
@@ -48,9 +49,7 @@ class HourlyWeatherCard extends StatelessWidget {
             FittedBox(
               child: Text(
                 '$time',
-                style: TextStyle(
-                  color: Colors.green,
-                ),
+                style: kshadowTextStyle,
               ),
             ),
             Image.asset(
@@ -60,10 +59,7 @@ class HourlyWeatherCard extends StatelessWidget {
             FittedBox(
               child: Text(
                 '$temperature°C',
-                style: TextStyle(
-                  color: Colors.deepOrange,
-                  fontWeight: FontWeight.bold
-                ),
+                style: kshadowTextStyle
               ),
             )
           ],

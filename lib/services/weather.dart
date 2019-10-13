@@ -1,39 +1,47 @@
-import 'package:clima/services/location.dart';
 import 'package:clima/services/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:clima/screens/nointernet_screen.dart';
-import 'dart:convert';
-
 
 const appId = 'e236362ae503f219d27750b503a41f51';
-const openWeatheMapURL='https://api.openweathermap.org/data/2.5/weather';
-const openWeatherMapForecastURL = 'https://api.openweathermap.org/data/2.5/forecast/';
+
+const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
+const openWeatherMapForecastURL =
+    'https://api.openweathermap.org/data/2.5/forecast/';
+
+
 
 class WeatherModel {
-
   Future<dynamic> getCityWeather(String cityName) async {
+    var url = '$openWeatherMapURL?q=$cityName&appId=$appId&units=metric';
 
-    var url = '$openWeatheMapURL?q=$cityName&appId=$appId&units=metric';
     NetworkHelper networkHelper = NetworkHelper(url);
 
     print("URL - $url");
-    var weatherData = await networkHelper.getData();
-    print(weatherData);
 
-    var forecastUrl = '$openWeatherMapForecastURL?q=$cityName&appId=$appId&'
-        'units=metric';
-
-    NetworkHelper networkHelperHourly = NetworkHelper(forecastUrl);
-    var hourlyData = await networkHelperHourly.getData();
-
+    var weatherData;
     var weatherDataMap = Map();
+
+    try {
+      weatherData = await networkHelper.getData();
+    } catch (SocketException) {
+      weatherDataMap['weatherData'] = 'No Internet Connection';
+      weatherDataMap['hourlyData'] = 'No Internet Connection';
+      return weatherDataMap;
+    }
+      print(weatherData);
+
+      var forecastUrl = '$openWeatherMapForecastURL?q=$cityName&appId=$appId&'
+          'units=metric';
+
+      NetworkHelper networkHelperHourly = NetworkHelper(forecastUrl);
+      var hourlyData = await networkHelperHourly.getData();
 
     if (weatherData is int) {
       if (weatherData == 404) {
         print("No data found");
         return null;
       } else if (weatherData == 400) {
-
+        print('Bad request');
+        return null;
       }
     }
 
@@ -47,13 +55,12 @@ class WeatherModel {
         return null;
       }
     }
-
   }
 
-  Future<dynamic> getlocationWeather() async{
+  Future<dynamic> getlocationWeather() async {
     await location.getCurrentLocation();
 
-    String url = '$openWeatheMapURL?lat='
+    String url = '$openWeatherMapURL?lat='
         '${location.latitude}&lon=${location.longitude}&appid=$appId&units=metric';
     NetworkHelper networkHelper = NetworkHelper(url);
 
@@ -61,16 +68,15 @@ class WeatherModel {
 
     var weatherData;
     try {
-       weatherData = await networkHelper.getData();
+      weatherData = await networkHelper.getData();
     } catch (SocketException) {
       weatherDataMap['weatherData'] = 'No Internet Connection';
       weatherDataMap['hourlyData'] = 'No Internet Connection';
       return weatherDataMap;
     }
 
-    var hourlyData = await getHourlyWeatherData(location.latitude, location.longitude);
-
-
+    var hourlyData =
+        await getHourlyWeatherData(location.latitude, location.longitude);
 
     weatherDataMap['weatherData'] = weatherData;
     weatherDataMap['hourlyData'] = hourlyData;
@@ -78,8 +84,8 @@ class WeatherModel {
     return weatherDataMap;
   }
 
-  Future<dynamic> getHourlyWeatherData(double latitude, double longitude) async {
-
+  Future<dynamic> getHourlyWeatherData(
+      double latitude, double longitude) async {
     var url = '$openWeatherMapForecastURL?lat=$latitude&lon=$longitude&appid='
         '$appId&units=metric';
 
@@ -89,20 +95,17 @@ class WeatherModel {
     var hourlyWeatherData = await networkHelper.getData();
 
     return hourlyWeatherData;
-
   }
-
 
   Color getBackgroundColor(int condition) {
     if (condition < 700) {
       return Color(0xFFB4E1E5);
-    } else if(condition >=700 && condition < 800) {
+    } else if (condition >= 700 && condition < 800) {
       return Color(0xFFA9EDCE);
     } else if (condition >= 800 && condition <= 804) {
       return Color(0xFFF2AC7A);
     }
   }
-
 
   String getWeatherIcon(int condition) {
     if (condition < 300) {

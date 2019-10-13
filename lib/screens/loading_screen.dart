@@ -4,6 +4,7 @@ import 'package:clima/screens/location_screen.dart';
 import 'package:clima/screens/nointernet_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:clima/services/here_weather.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -36,10 +37,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
       var hourlyData = weatherDataMap['hourlyData'];
       print("Hourly data - $hourlyData");
 
+      var sevenDayWeatherData = await HereWeatherModel().getSevenDayLocationWeather();
+      print('7 day here forecast - $sevenDayWeatherData');
+
       Navigator.push(context, new MaterialPageRoute(builder: (context) {
         return LocationScreen(
           locationWeather: weatherData,
           locationHourWeather: hourlyData,
+          sevenDayWeather: sevenDayWeatherData,
         );
       }));
     }

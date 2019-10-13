@@ -1,4 +1,4 @@
-package co.appbrewery.clima;
+package com.srikkanthgovindaraajan.weatherman;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
