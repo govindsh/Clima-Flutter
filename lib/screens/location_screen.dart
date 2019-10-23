@@ -517,7 +517,7 @@ class _LocationScreenState extends State<LocationScreen>
                       ExtendedWeatherDetails(
                         imageName: 'air-quality',
                         detail: 'Air Quality',
-                        weatherDescription: airDescription,
+                        weatherMetric: airDescription,
                         altText: 'unavailable',
                       ),
                     ],

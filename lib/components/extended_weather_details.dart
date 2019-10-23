@@ -20,20 +20,30 @@ class ExtendedWeatherDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Image.asset(
-            'images/$imageName.png',
-        scale: 1.0,),
+          'images/$imageName.png',
+          scale: 1.0,),
         SizedBox(
-        width: 10.0,
+          width: 10.0,
         ),
-        weatherMetric != "*"
+
+        detail != 'Air Quality' ?
+//            Detail is not air quality
+        (weatherMetric != '*'
+//        Weather metric has some value
             ? Text(
-                '$detail - $weatherMetric $unit $weatherDescription',
-                style: kExtendedWeatherDetailsStyle,
-              )
+          '$detail - $weatherMetric $unit $weatherDescription',
+          style: kExtendedWeatherDetailsStyle,
+        )
             : Text(
-                '$detail - $altText',
-                style: kExtendedWeatherDetailsStyle,
-              ),
+//          Weather metric has no value
+          '$detail - $altText',
+          style: kExtendedWeatherDetailsStyle,
+        ))
+            :
+        // Detail is about air quality
+        weatherMetric != '' ?
+        Text('$detail - $weatherMetric', style: kExtendedWeatherDetailsStyle,) :
+        Text('$detail - $altText', style: kExtendedWeatherDetailsStyle,)
       ],
     );
   }

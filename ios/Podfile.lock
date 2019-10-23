@@ -14,22 +14,16 @@ PODS:
     - Reachability
   - location_permissions (2.0.2):
     - Flutter
-  - rate_my_app (0.1):
-    - Flutter
   - Reachability (3.2)
-  - shared_preferences (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - app_settings (from `.symlinks/plugins/app_settings/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
   - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - keyboard_visibility (from `.symlinks/plugins/keyboard_visibility/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
-  - rate_my_app (from `.symlinks/plugins/rate_my_app/ios`)
-  - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -41,7 +35,7 @@ EXTERNAL SOURCES:
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   geolocator:
     :path: ".symlinks/plugins/geolocator/ios"
   google_api_availability:
@@ -50,10 +44,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/keyboard_visibility/ios"
   location_permissions:
     :path: ".symlinks/plugins/location_permissions/ios"
-  rate_my_app:
-    :path: ".symlinks/plugins/rate_my_app/ios"
-  shared_preferences:
-    :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
   app_settings: 27651d311385d34d91afa163c0e4539cfd0c4c5d
@@ -63,9 +53,7 @@ SPEC CHECKSUMS:
   google_api_availability: 163b30f802e6148c67f092aa4501c90ddd8eec8d
   keyboard_visibility: 96a24de806fe6823c3ad956c01ba2ec6d056616f
   location_permissions: 67cfaff583afbb027a9f9248196f4b79c40f3cdc
-  rate_my_app: 45513a2f4d9a55b7b46d19b64fc13882fd101157
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
 
 PODFILE CHECKSUM: b6a0a141693093b304368d08511b46cf3d1d0ac5
 
