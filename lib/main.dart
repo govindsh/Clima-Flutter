@@ -6,6 +6,7 @@ import 'package:clima/screens/location_screen.dart';
 import 'package:clima/screens/nointernet_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(MyApp());
   });

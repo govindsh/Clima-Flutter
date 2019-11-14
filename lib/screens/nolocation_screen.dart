@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:clima/services/weather.dart';
-import 'package:clima/services/networking.dart';
 import 'package:clima/screens/location_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:clima/services/here_weather.dart';
+import 'dart:io' show Platform;
 
-class NoInternetScreen extends StatefulWidget {
+class NoLocationScreen extends StatefulWidget {
   @override
-  _NoInternetScreenState createState() => _NoInternetScreenState();
+  _NoLocationScreenState createState() => _NoLocationScreenState();
 }
 
-class _NoInternetScreenState extends State<NoInternetScreen> {
+class _NoLocationScreenState extends State<NoLocationScreen> {
   bool showSpinner = false;
   WeatherModel weatherModel = WeatherModel();
   @override
@@ -19,19 +20,21 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
       child: Scaffold(
+        backgroundColor: Colors.grey,
         appBar: AppBar(
-          title: Text('No internet connection'),
+          title: Text('Enable location services'),
         ),
         body: Column(
           children: <Widget>[
             Image(
-              image: AssetImage('images/no-connection.png'),
+              image: AssetImage('images/searching.png'),
             ),
             RaisedButton(
               onPressed: () {
-                AppSettings.openWIFISettings();
+//                Platform.isIOS ? AppSettings.openLocationSettings() : AppSettings.openAppSettings();
+                AppSettings.openAppSettings();
               },
-              child: Text('Open Wifi Settings.'),
+              child: Text('Open Location Settings.'),
             ),
             RaisedButton(
               onPressed: () async {
@@ -40,7 +43,15 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 });
                 var weatherDataMap = Map();
                 var sevenDayWeatherData;
-                if (await NetworkHelper.checkInternetConnection()) {
+
+                // Check if location services is enabled
+
+                GeolocationStatus isLocationEnabled = await Geolocator().checkGeolocationPermissionStatus(
+                  locationPermission: GeolocationPermission.locationWhenInUse,
+                );
+
+                if (isLocationEnabled != GeolocationStatus.denied &&
+                    isLocationEnabled != GeolocationStatus.unknown) {
 
                   // Get weather data
                   weatherDataMap = await weatherModel.getlocationWeather();
@@ -55,9 +66,10 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                     );
                   }));
                 } else {
+                  // Location services is disabled or unknown
                   Navigator.push(context,
                       new MaterialPageRoute(builder: (context) {
-                        return NoInternetScreen();
+                        return NoLocationScreen();
                       }));
                 }
                 setState(() {

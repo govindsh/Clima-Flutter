@@ -40,6 +40,7 @@ class _LocationScreenState extends State<LocationScreen>
   var humidity;
   var condition;
   var wind;
+  var windDesc;
   int sunriseTime;
   int sunsetTime;
   String maxTemp;
@@ -103,6 +104,7 @@ class _LocationScreenState extends State<LocationScreen>
         sunriseTime = 0;
         sunsetTime = 0;
         wind = 0;
+        windDesc = '';
 
         var now = new DateTime.now();
         var formatter = new DateFormat('yyyy-MM-dd EEEE');
@@ -125,6 +127,12 @@ class _LocationScreenState extends State<LocationScreen>
         sunriseTime = 0;
         sunsetTime = 0;
         wind = 0;
+        windDesc = '';
+        chanceOfRain = '';
+        precipitationDescription = '';
+        rainFall = '';
+        snowFall = '';
+        airDescription = '';
 
         var now = new DateTime.now();
         var formatter = new DateFormat('yyyy-MM-dd EEEE');
@@ -144,7 +152,7 @@ class _LocationScreenState extends State<LocationScreen>
         message = weatherModel.getMessage(temperature);
         cityName = weatherData['name'];
         humidity = weatherData['main']['humidity'];
-        wind = weatherData['wind']['speed'];
+//        wind = weatherData['wind']['speed'];
         sunriseTime = weatherData['sys']['sunrise'];
         sunsetTime = weatherData['sys']['sunset'];
         print('Sun rise = $sunriseTime');
@@ -171,20 +179,16 @@ class _LocationScreenState extends State<LocationScreen>
 
           hourlyWeatherWidgetList.add(HourlyWeatherCard(
             time: (hourFormat).toString(),
-            imageName: weatherModel.getWeatherIcon(condition),
+            imageName: weatherModel.getWeatherIconForHourlyForecast(condition, hourFormat),
             temperature: temperature.toString(),
           ));
         }
       }
 
       // Get here weather details
-      date = sevenDayWeatherData['dailyForecasts']['forecastLocation']
-              ['forecast'][0]['utcTime']
-          .toString()
-          .split('T')[0];
-
-      dayName = sevenDayWeatherData['dailyForecasts']['forecastLocation']
-          ['forecast'][0]['weekday'];
+      var now = new DateTime.now();
+      var formatter = new DateFormat('yyyy-MM-dd - EEEE');
+      date = formatter.format(now);
 
       chanceOfRain = sevenDayWeatherData['dailyForecasts']['forecastLocation']
           ['forecast'][0]['precipitationProbability'];
@@ -212,6 +216,13 @@ class _LocationScreenState extends State<LocationScreen>
 
       minTemp = sevenDayWeatherData['dailyForecasts']['forecastLocation']
           ['forecast'][0]['lowTemperature'];
+
+      wind = sevenDayWeatherData['dailyForecasts']['forecastLocation']
+      ['forecast'][0]['windSpeed'];
+      print('Wind speed - $wind');
+
+      windDesc = sevenDayWeatherData['dailyForecasts']['forecastLocation']
+      ['forecast'][0]['windDescShort'];
 
       for (int i = 0; i < 7; i++) {
         var imageName = sevenDayWeatherData['dailyForecasts']
@@ -353,7 +364,7 @@ class _LocationScreenState extends State<LocationScreen>
 
               date != null ?
               Text(
-                '$date - $dayName',
+                '$date',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'DG',
@@ -376,7 +387,7 @@ class _LocationScreenState extends State<LocationScreen>
                     Flexible(
                       child: Center(
                         child: Text(
-                          '${toBeginningOfSentenceCase(description)} - $cityName - $temperature°C',
+                          '${toBeginningOfSentenceCase(description)} - $cityName',
                           style: TextStyle(
                             fontFamily: 'DG',
                             fontSize: 30.0,
@@ -394,6 +405,14 @@ class _LocationScreenState extends State<LocationScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Text(
+                    '$temperature °C',
+                    style: TextStyle(
+                      fontFamily: 'DG',
+                      fontSize: 60.0,
+                      color: Colors.black
+                    ),
+                  ),
                   Image.asset(
                     '$weatherIcon',
                     height: controller.value * 100,
@@ -407,6 +426,7 @@ class _LocationScreenState extends State<LocationScreen>
 
               // Display forecast for next 24 hours
 
+              widget.locationWeather != null ?
               Text(
                 '24 hour forecast',
                 textAlign: TextAlign.center,
@@ -415,7 +435,8 @@ class _LocationScreenState extends State<LocationScreen>
                   fontSize: 30.0,
                   color: Colors.black,
                 ),
-              ),
+              ) :
+                  Text(''),
 
               ConstrainedBox(
                 constraints: BoxConstraints(
@@ -434,6 +455,7 @@ class _LocationScreenState extends State<LocationScreen>
 
               // Display Extended Weather conditions
 
+              widget.locationWeather != null ?
               Text(
                 'Weather Conditions today',
                 textAlign: TextAlign.center,
@@ -442,10 +464,11 @@ class _LocationScreenState extends State<LocationScreen>
                   fontSize: 30.0,
                   color: Colors.black,
                 ),
-              ),
+              ) : Text(''),
 
               // Display humidity, wind, max and min temp
 
+              widget.locationWeather != null ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -470,22 +493,33 @@ class _LocationScreenState extends State<LocationScreen>
                   Expanded(
                     child: WeatherCard(
                         keyType: 'Wind',
-                        value: '${wind.toInt()} km/h',
+                        value: windDesc == '*' ?
+                        '${double.parse(wind).toInt()} km/h' : '${double.parse('$wind').toInt()} km/h $windDesc',
                         imageName: 'images/windy.png'),
                   ),
                 ],
+              ) : Row(
+                children: <Widget>[],
               ),
 
               SizedBox(
                 height: 20.0,
               ),
 
+
+              widget.locationWeather != null ?
               Card(
                 color: Color(0xFFF8EFBA),
                 child: Container(
                   width: 100,
                   child: Column(
                     children: <Widget>[
+                      ExtendedWeatherDetails(
+                        imageName: 'feels_like',
+                        detail: 'Feels Like',
+                        weatherMetric: double.parse(feelsLikeTemp).toInt().toString(),
+                        unit: '°C',
+                      ),
                       ExtendedWeatherDetails(
                         imageName: 'rain_icon',
                         detail: 'Chance of Rain',
@@ -510,7 +544,7 @@ class _LocationScreenState extends State<LocationScreen>
                         imageName: 'snow_icon',
                         detail: 'Snowfall',
                         weatherMetric: snowFall,
-                        weatherDescription: ' cm',
+                        unit: 'cm',
                         altText: '0 cm',
                       ),
 
@@ -518,18 +552,19 @@ class _LocationScreenState extends State<LocationScreen>
                         imageName: 'air-quality',
                         detail: 'Air Quality',
                         weatherMetric: airDescription,
-                        altText: 'unavailable',
+                        altText: 'Normal',
                       ),
                     ],
                   ),
                 ),
-              ),
+              ) : Card(),
 
               SizedBox(
                 height: 20.0,
               ),
 
               // Display 7 day weather forecast
+              widget.locationWeather != null ?
               Text(
                 '7 Day forecast',
                 textAlign: TextAlign.center,
@@ -538,7 +573,7 @@ class _LocationScreenState extends State<LocationScreen>
                   fontSize: 30.0,
                   color: Colors.black,
                 ),
-              ),
+              ) : Text(''),
 
               ConstrainedBox(
                 constraints: BoxConstraints(
@@ -560,6 +595,7 @@ class _LocationScreenState extends State<LocationScreen>
               ),
 
               // Show Sunrise and Sunset times
+              widget.locationWeather != null ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
@@ -572,7 +608,7 @@ class _LocationScreenState extends State<LocationScreen>
                     isSunRise: false,
                   ),
                 ],
-              ),
+              ) : Row(children: <Widget>[],),
 
               SizedBox(
                 height: 20.0,

@@ -5,6 +5,8 @@ import 'package:clima/screens/nointernet_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:clima/services/here_weather.dart';
+import 'package:geolocator/geolocator.dart';
+import 'nolocation_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -22,31 +24,65 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void getLocationData() async {
     var weatherDataMap = Map();
 
-    // Check for internet connection
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      Navigator.push(context, new MaterialPageRoute(builder: (context) {
-        return NoInternetScreen();
-      }));
+    var weatherData;
+    var sevenDayWeatherData;
+    var hourlyData;
+
+    // Check for location services is enabled
+    print("Checking if location services are enabled");
+
+    GeolocationStatus isLocationEnabled = await Geolocator().checkGeolocationPermissionStatus(
+      locationPermission: GeolocationPermission.locationWhenInUse,
+    );
+
+    print(isLocationEnabled);
+
+    if (isLocationEnabled != GeolocationStatus.denied) {
+      // Check for internet connection
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      print(connectivityResult);
+      if (connectivityResult == ConnectivityResult.none) {
+        Navigator.push(context, new MaterialPageRoute(builder: (context) {
+          return NoInternetScreen();
+        }));
+      } else {
+        weatherDataMap = await WeatherModel().getlocationWeather();
+
+        weatherData = weatherDataMap['weatherData'];
+        print("Weather data - $weatherData");
+
+        hourlyData = weatherDataMap['hourlyData'];
+        print("Hourly data - $hourlyData");
+
+        sevenDayWeatherData = await HereWeatherModel()
+            .getSevenDayLocationWeather();
+        print('7 day here forecast - $sevenDayWeatherData');
+
+        if (hourlyData == 400 || weatherData == 400 || sevenDayWeatherData == 400) {
+          print('Got bad request, check location services - $isLocationEnabled');
+          Navigator.push(context, new MaterialPageRoute(builder: (context) {
+            return NoLocationScreen();
+          }));
+        } else {
+          print('In else block location status - $isLocationEnabled');
+          Navigator.push(context, new MaterialPageRoute(builder: (context) {
+            return LocationScreen(
+              locationWeather: weatherData,
+              locationHourWeather: hourlyData,
+              sevenDayWeather: sevenDayWeatherData,
+            );
+          }));
+
+        }
+      }
     } else {
-      weatherDataMap = await WeatherModel().getlocationWeather();
-
-      var weatherData = weatherDataMap['weatherData'];
-      print("Weather data - $weatherData");
-
-      var hourlyData = weatherDataMap['hourlyData'];
-      print("Hourly data - $hourlyData");
-
-      var sevenDayWeatherData = await HereWeatherModel().getSevenDayLocationWeather();
-      print('7 day here forecast - $sevenDayWeatherData');
-
+      weatherData = 400;
+      sevenDayWeatherData = 400;
+      hourlyData = 400;
       Navigator.push(context, new MaterialPageRoute(builder: (context) {
-        return LocationScreen(
-          locationWeather: weatherData,
-          locationHourWeather: hourlyData,
-          sevenDayWeather: sevenDayWeatherData,
-        );
+        return NoLocationScreen();
       }));
+
     }
   }
 

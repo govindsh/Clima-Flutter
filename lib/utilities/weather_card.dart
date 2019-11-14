@@ -39,7 +39,7 @@ class WeatherCard extends StatelessWidget {
                   '$value',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 25.0,
+                    fontSize: 15.0,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Julius',
                   ),

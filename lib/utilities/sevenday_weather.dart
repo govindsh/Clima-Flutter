@@ -37,10 +37,10 @@ class SevenDayWeatherCard extends StatelessWidget {
             ),
             Image.network(imageName, scale: 1.5,),
             FittedBox(
-              child: Text('High - $highTemperature°C', style: kshadowTextStyle),
+              child: Text('High: $highTemperature°C', style: kshadowTextStyle),
             ),
             FittedBox(
-              child: Text('Low - $lowTemperature°C', style: kshadowTextStyle),
+              child: Text('Low: $lowTemperature°C', style: kshadowTextStyle),
             )
           ],
         ),

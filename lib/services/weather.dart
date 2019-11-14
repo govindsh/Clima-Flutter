@@ -1,5 +1,6 @@
 import 'package:clima/services/networking.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 const appId = 'e236362ae503f219d27750b503a41f51';
 
@@ -99,11 +100,38 @@ class WeatherModel {
 
   Color getBackgroundColor(int condition) {
     if (condition < 700) {
-      return Color(0xFFB4E1E5);
+      if (int.parse(getTimeMarker()['hour']) > 6 && getTimeMarker()['timeOfDay'] == 'PM') {
+        return Color(0xFF3498db);
+      } else {
+        return Color(0xFFB4E1E5);
+      }
     } else if (condition >= 700 && condition < 800) {
-      return Color(0xFFA9EDCE);
+      if (int.parse(getTimeMarker()['hour']) > 6 && getTimeMarker()['timeOfDay'] == 'PM') {
+        return Color(0xFF74b9FF);
+      } else {
+        return Color(0xFFA9EDCE);
+      }
     } else if (condition >= 800 && condition <= 804) {
-      return Color(0xFFF2AC7A);
+      if (int.parse(getTimeMarker()['hour']) > 6 && getTimeMarker()['timeOfDay'] == 'PM') {
+        return Color(0xFF0984E3);
+      } else {
+        return Color(0xFFF2AC7A);
+      }
+    }
+  }
+
+  String getWeatherIconForHourlyForecast(int condition, String time) {
+    if (condition == 800) {
+      var hour = time.split(' ')[1].split(':')[0];
+      var image = '';
+      if (int.parse(hour) > 6 && time.split(' ')[2] == 'PM' ) {
+        image = 'images/night_clear_sky.png';
+      } else {
+        image = 'images/sunny-128.png';
+      }
+      return image;
+    } else {
+      return getWeatherIcon(condition);
     }
   }
 
@@ -119,12 +147,30 @@ class WeatherModel {
     } else if (condition < 800) {
       return 'images/overcast-128.png';
     } else if (condition == 800) {
-      return 'images/sunny-128.png';
+      if (int.parse(getTimeMarker()['hour']) > 6 && getTimeMarker()['timeOfDay'] == 'PM') {
+        return 'images/night_clear_sky.png';
+      } else {
+        return 'images/sunny-128.png';
+      }
     } else if (condition <= 804) {
       return 'images/cloudy-128.png';
     } else {
       return 'images/puzzled.png';
     }
+  }
+
+  Map getTimeMarker() {
+    var now = new DateTime.now();
+    var formatter = new DateFormat('K:a');
+
+    var hour = formatter.format(now).split(':')[0];
+    var timeOfDay = formatter.format(now).split(':')[1];
+
+    Map timeIdentifiers = new Map();
+    timeIdentifiers['hour'] = hour;
+    timeIdentifiers['timeOfDay'] = timeOfDay;
+//    print(timeIdentifiers);
+    return timeIdentifiers;
   }
 
   String getMessage(int temp) {
